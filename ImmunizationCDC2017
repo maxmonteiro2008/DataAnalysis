@@ -1,0 +1,69 @@
+import pandas as pd
+import numpy  as np
+
+# loading the data  from CDC
+data=pd.read_csv( "ahttps://hpdoqeui.labs.coursera.org/notebooks/assignments/assignment2/assets/NISPUF17.csv",index_col=0)
+
+# function that returns the mothers's education profile proportion 
+def proportion_of_education():
+   
+    
+    
+    total= len(data['EDUC1'])
+    
+    result={
+        "less than high school":np.sum(data['EDUC1']==1)/total,
+        "high school":np.sum(data['EDUC1']==2)/total,
+        "more than high school but not college":np.sum(data['EDUC1']==3)/total,
+        "college":np.sum(data['EDUC1']==4)/total
+            }
+    
+       
+    return result
+ # function that returns the average flu vaccine  per child   
+def average_influenza_doses():
+    
+    total= len(data['P_NUMFLU'])
+    dt=data[['CBF_01','P_NUMFLU']]
+    dt1=dt[dt['CBF_01']==1].dropna()
+    dt2=dt[dt['CBF_01']==2].dropna()
+    
+    d1=np.mean(dt1['P_NUMFLU'])
+    d2=np.mean(dt2['P_NUMFLU'])
+    
+    
+    return(d1,d2)
+ 
+ #function that returns the  vaccine  effectiveness by sex   
+ def chickenpox_by_sex():
+  
+    result={"male":0.2,
+            "female":0.4
+           }
+    dt=data[['HAD_CPOX','P_NUMVRC','SEX']]
+    
+    dtmale=dt[(dt['P_NUMVRC'].gt(0))&(dt['HAD_CPOX']==1)&(dt['SEX']==1)]
+    dtfemale=dt[(dt['P_NUMVRC'].gt(0))&(dt['HAD_CPOX']==1)&(dt['SEX']==2)]
+    
+    dtmale2=dt[(dt['P_NUMVRC'].gt(0))&(dt['HAD_CPOX']==2)&(dt['SEX']==1)]
+    dtfemale2=dt[(dt['P_NUMVRC'].gt(0))&(dt['HAD_CPOX']==2)&(dt['SEX']==2)]
+    
+    result={"male":len(dtmale)/len(dtmale2),
+            "female":len(dtfemale)/len(dtfemale2)
+           }
+    
+    return result
+    
+    
+ #function that returns the correlation between vaccine  and  not get sick  
+   def corr_chickenpox():
+    
+    dt=data[['HAD_CPOX','P_NUMVRC']].dropna()
+    dt=dt[dt['HAD_CPOX']<3]
+    dt.sort_index(inplace=True)
+    
+    corr, pval=stats.pearsonr(dt['HAD_CPOX'],dt['P_NUMVRC'])
+    
+  
+    return corr
+    
